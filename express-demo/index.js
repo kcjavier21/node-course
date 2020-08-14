@@ -1,75 +1,61 @@
 const express = require('express');
 const Joi = require('joi');
 const app = express();
+const logger = require('./middleware/logger');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const config = require('config');
+//const startupDebugger = require('debug')('app:startup');
+//const dbDebugger = require('debug')('app:db');
+const courses = require('./routes/courses');
+const home = require('./routes/homePage')
 
+// ============ Environment ==========
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`); 
+console.log(`app: ${app.get('env')}`);
+
+
+// =========== Templating Engine ==========
+app.set('view engine', 'pug');
+app.set('views', './views'); 
+
+
+
+//=========== Built-in Middleware ========
 app.use(express.json());
 
-const courses = [
-    { id: 1, name: 'Computer Science' },
-    { id: 2, name: 'Business Management' },
-    { id: 3, name: 'Mechanical Engineering' }
-];
+app.use(logger.log);
+//app.use(logger.add);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
-// Home Page
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
 
+// ========= Third party Middleware =========
+app.use(helmet());
+
+        // ========= Structuring Express Apps ========
+        app.use('/', home);
+        app.use('/api/courses', courses);
+
+
+        // =========== Configuration ========
+        console.log('Application Name: ' + config.get('name'));
+        console.log('Mail Server: ' + config.get('mail.host'));
+        console.log('Mail Password: ' + config.get('mail.password'));
+
+if(app.get('env') === 'development') {
+    app.use(morgan('tiny'));
+    console.log('Morgan enabled...');
+}
+
+// Db work...
+//dbDebugger('Connected to the database...');
 /*
-app.get('/api/courses', (req, res) => {
-    res.send([1, 2, 3]);
+app.use(function(req, res, next) {
+    console.log('Authenticating...');
+    next();
 });
 */
-
-// Get Course By ID
-
-app.get('/api/courses/:id', (req, res) => {
-   const course = courses.find(c => c.id === parseInt(req.params.id));
-
-   if(!course) {
-       res.status(404);
-       res.send('ERROR 404. Course not found! :(');
-   }
-
-   res.send(course);
-
- });
-
-// HTTP Post Request || Create New Course
-
-app.post('/api/courses', (req, res) => {
-    const schema = {
-        name: Joi.string().min(3).required()
-    };
-
-    const result = Joi.validate(req.body, schema);
-
-    if(result.error) {
-        res.status(400).send(result.error.details[0].message);
-        return;
-    }
-
-    const course = {
-        id: courses.length + 1,
-        name: req.body.name
-    };
-    courses.push(course);
-    res.send(course);
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
