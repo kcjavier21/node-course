@@ -19,7 +19,7 @@ const courseSchema = new mongoose.Schema({
 const Course = mongoose.model('Courses', courseSchema);
 // ========== Model =============
 
-/*
+
 async function createCourse(){
     const course = new Course({
         name: 'React Course',
@@ -33,7 +33,7 @@ async function createCourse(){
     const result = await course.save();
     console.log(result);
 }
-*/
+
 
 //createCourse();
 
