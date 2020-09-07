@@ -2,18 +2,16 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const {Genre, validate} = require('../models/genre');
-/*
-const genres = [
-    { id: 1, name: 'Action' },  
-    { id: 2, name: 'Horror' },  
-    { id: 3, name: 'Romance' },  
-  ];
-*/
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
+//const asyncMiddleware = require('../middleware/async');
+require('express-async-errors');
 
 
 // =========== CREATE Genre ==========
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
+
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -22,22 +20,19 @@ router.post('/', async (req, res) => {
   res.send(genre);
 });
 
-// createGenre();
-
 
 // =========== READ / GET Genre ==============
 
-router.get('/', async (req, res) => {
-  const genres = await Genre.find().sort({ name: 1 });
-  res.send(genres);
+router.get('/', async(req, res) => {
+    throw new Error('Could not get genres.');
+    const genres = await Genre.find().sort({ name: 1 });
+    res.send(genres);
 });
 
 
-// getGenres();
-
 // =========== UPDATE Genre =============
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
   
@@ -50,11 +45,11 @@ router.put('/:id', async (req, res) => {
   res.send(genre);
 });
 
-//updateGenre('5f4c6432df20452dac18f470');
+
 
 // ============ DELETE Genre ===============
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   const genre = await Genre.findByIdAndRemove(req.params.id);
 
   if (!genre) return res.status(404).send('The genre with the given ID was not found.');

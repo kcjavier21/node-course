@@ -5,6 +5,7 @@ const { Rental, validate } = require('../models/rental');
 const { Customer } = require('../models/customer');
 const { Movie } = require('../models/movie');
 const Fawn = require('fawn');
+const auth = require('../middleware/auth');
 
 Fawn.init(mongoose);
 
@@ -19,6 +20,7 @@ router.post('/', async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
+    
     const customer = await Customer.findById(req.body.customerId);
     if (!customer) return res.status(400).send('Invalid customer.');
 
@@ -45,6 +47,7 @@ router.post('/', async (req, res) => {
     movie.numberInStock--;
     movie.save();
     */
+   
     try {
         new Fawn.Task()
             .save('rentals', rental)
@@ -58,6 +61,7 @@ router.post('/', async (req, res) => {
     catch(ex) {
         res.status(500).send('Something failed.');
     }
+    
 });
 
 module.exports = router;
