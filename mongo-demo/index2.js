@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 //======== Connect To MongoDB ===========
 
-mongoose.connect('mongodb://localhost/playground', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://kcjavier21:justkc@cluster0.phyak.mongodb.net/playground?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB...'))
     .catch(err => console.error('Could not connect to MongoDB', err))
 
@@ -64,7 +64,7 @@ const Course = mongoose.model('Courses', courseSchema);
 
 async function createCourse(){
     const course = new Course({
-        name: 'SCSS Course',
+        name: 'CSS Course',
         category: 'Web',
         author: 'Ken',
         tags: ['frontend'],
