@@ -59,7 +59,7 @@ const courseSchema = new mongoose.Schema({
     }
 });
 
-const Course = mongoose.model('Courses', courseSchema);
+const Course = mongoose.model('TestCollection', courseSchema);
 // ========== Model =============
 
 async function createCourse(){
